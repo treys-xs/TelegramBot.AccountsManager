@@ -6,7 +6,7 @@ public class Account
     public DateTime CreatedAt { get; set; }
     public string Login { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; }
     
     public Service? Service { get; set; }
 }

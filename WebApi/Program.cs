@@ -1,5 +1,7 @@
 using WebApi.Configurations.TelegramBot;
 using Telegram.Bot;
+using Application.Interfaces;
+using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,8 @@ builder.Services.AddHttpClient(TelegramBotConfigurationConstants.TelegramBotClie
     .RemoveAllLoggers()
     .AddTypedClient<ITelegramBotClient>(
         httpClient => new TelegramBotClient(telegramBotConfiguration.Get<TelegramBotConfiguration>()!.Token, httpClient));
+
+builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
 
 builder.Services.ConfigureTelegramBotMvc();
 
