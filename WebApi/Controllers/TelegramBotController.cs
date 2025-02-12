@@ -3,19 +3,33 @@ using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using WebApi.Configurations.TelegramBot;
+using WebApi.Interfaces;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-public class TelegramBotController(IOptions<TelegramBotConfiguration> configuration) : ControllerBase
+public class TelegramBotController : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> SetWebHook(
-        [FromServices] ITelegramBotClient bot, 
-        CancellationToken cancellationToken)
+    private readonly IOptions<TelegramBotConfiguration> _configuration;
+    private readonly IGetUpdateHandler _updateHandlers;
+    private readonly ITelegramBotClient _botClient;
+
+    public TelegramBotController(
+        IOptions<TelegramBotConfiguration> configuration,
+        IGetUpdateHandler updateHander,
+        ITelegramBotClient botClient)
     {
-        await bot.SetWebhook(configuration.Value.WebHookUrl, allowedUpdates: [], cancellationToken: cancellationToken);
+        _configuration = configuration;
+        _updateHandlers = updateHander;
+        _botClient = botClient;
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> SetWebHook(CancellationToken cancellationToken)
+    {
+        await _botClient.SetWebhook(_configuration.Value.WebHookUrl, 
+            allowedUpdates: [], cancellationToken: cancellationToken);
         
         return Ok();
     }
@@ -23,9 +37,12 @@ public class TelegramBotController(IOptions<TelegramBotConfiguration> configurat
     [HttpPost]
     public async Task<IActionResult> ReceiveMessage(
         [FromBody] Update update, 
-        [FromServices] ITelegramBotClient bot, 
         CancellationToken cancellationToken)
     {
+        var handler = _updateHandlers.Get(update.Type);
+        
+        await handler.HandleAsync(_botClient, update, cancellationToken);
+        
         return Ok();
     }
 }

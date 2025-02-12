@@ -2,6 +2,8 @@ using WebApi.Configurations.TelegramBot;
 using Telegram.Bot;
 using Application.Interfaces;
 using Infrastructure;
+using WebApi.Interfaces;
+using WebApi.UpdateHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,8 @@ builder.Services.AddHttpClient(TelegramBotConfigurationConstants.TelegramBotClie
         httpClient => new TelegramBotClient(telegramBotConfiguration.Get<TelegramBotConfiguration>()!.Token, httpClient));
 
 builder.Services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
+
+builder.Services.AddScoped<IGetUpdateHandler, GetUpdateHandler>();
 
 builder.Services.ConfigureTelegramBotMvc();
 

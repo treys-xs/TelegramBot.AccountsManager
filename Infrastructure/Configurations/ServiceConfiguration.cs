@@ -10,26 +10,32 @@ public class ServiceConfiguration : IEntityTypeConfiguration<Service>
     {
         builder.ToTable("services");
         
-        builder.HasKey(service => service.Id)
+        builder
+            .HasKey(service => service.Id)
             .HasName("service_id");
         
-        builder.Property(service => service.Name)
+        builder
+            .Property(service => service.Name)
             .HasMaxLength(100)
             .HasColumnName("name")
             .IsRequired();
         
-        builder.Property(service => service.Description)
+        builder
+            .Property(service => service.Description)
             .HasMaxLength(500)
             .HasColumnName("description");
         
-        builder.Property(service => service.Url)
+        builder
+            .Property(service => service.Url)
             .HasMaxLength(100)
             .HasColumnName("url");
 
-        builder.HasOne(service => service.User)
+        builder
+            .HasOne(service => service.User)
             .WithMany(user => user.Services);
         
-        builder.HasMany(service => service.Accounts)
+        builder
+            .HasMany(service => service.Accounts)
             .WithOne(user => user.Service);
     }
 }
