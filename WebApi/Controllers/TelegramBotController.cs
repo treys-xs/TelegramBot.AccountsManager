@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -9,21 +10,17 @@ namespace WebApi.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-public class TelegramBotController : ControllerBase
+public class TelegramBotController(
+    IOptions<TelegramBotConfiguration> configuration,
+    IGetTelegramUpdateHandler telegramUpdateHandler,
+    ITelegramBotClient botClient,
+    IMediator mediator)
+    : ControllerBase
 {
-    private readonly IOptions<TelegramBotConfiguration> _configuration;
-    private readonly IGetUpdateHandler _updateHandlers;
-    private readonly ITelegramBotClient _botClient;
-
-    public TelegramBotController(
-        IOptions<TelegramBotConfiguration> configuration,
-        IGetUpdateHandler updateHander,
-        ITelegramBotClient botClient)
-    {
-        _configuration = configuration;
-        _updateHandlers = updateHander;
-        _botClient = botClient;
-    }
+    private readonly IOptions<TelegramBotConfiguration> _configuration = configuration;
+    private readonly IGetTelegramUpdateHandler _telegramUpdateHandler = telegramUpdateHandler;
+    private readonly ITelegramBotClient _botClient = botClient;
+    private readonly IMediator _mediator = mediator;
     
     [HttpGet]
     public async Task<IActionResult> SetWebHook(CancellationToken cancellationToken)
@@ -39,10 +36,16 @@ public class TelegramBotController : ControllerBase
         [FromBody] Update update, 
         CancellationToken cancellationToken)
     {
-        var handler = _updateHandlers.Get(update.Type);
-        
-        await handler.HandleAsync(_botClient, update, cancellationToken);
-        
+        try
+        {
+            var handler = _telegramUpdateHandler.Get(update.Type);
+            
+            await handler.HandleAsync(_mediator, update, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+        }
+
         return Ok();
     }
 }
