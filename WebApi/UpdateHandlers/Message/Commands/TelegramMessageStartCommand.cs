@@ -12,9 +12,9 @@ public class TelegramMessageStartCommand : ITelegramMessageCommand
         var context = new StartCommand()
         {
             ChatId = update!.Message!.Chat.Id,
-            Username = update!.Message!.Chat.Username
+            Username = update.Message.Chat.Username ?? string.Empty
         };
         
-        await mediator.Send(context);
+        await mediator.Send(context, cancellationToken);
     }
 }

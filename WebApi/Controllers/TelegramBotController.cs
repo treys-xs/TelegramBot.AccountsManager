@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Application.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Telegram.Bot;
@@ -14,13 +15,15 @@ public class TelegramBotController(
     IOptions<TelegramBotConfiguration> configuration,
     IGetTelegramUpdateHandler telegramUpdateHandler,
     ITelegramBotClient botClient,
-    IMediator mediator)
+    IMediator mediator,
+    IApplicationDbContext dbContext)
     : ControllerBase
 {
     private readonly IOptions<TelegramBotConfiguration> _configuration = configuration;
     private readonly IGetTelegramUpdateHandler _telegramUpdateHandler = telegramUpdateHandler;
     private readonly ITelegramBotClient _botClient = botClient;
     private readonly IMediator _mediator = mediator;
+    private readonly IApplicationDbContext _dbContext = dbContext;
     
     [HttpGet]
     public async Task<IActionResult> SetWebHook(CancellationToken cancellationToken)
@@ -40,7 +43,7 @@ public class TelegramBotController(
         {
             var handler = _telegramUpdateHandler.Get(update.Type);
             
-            await handler.HandleAsync(_mediator, update, cancellationToken);
+            await handler.HandleAsync(_mediator, _dbContext, update, cancellationToken);
         }
         catch (Exception ex)
         {

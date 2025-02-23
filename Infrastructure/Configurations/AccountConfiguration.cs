@@ -10,9 +10,11 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
     {
         builder.ToTable("accounts");
         
+        builder.HasKey(account => account.Id);
+        
         builder
-            .HasKey(account => account.Id)
-            .HasName("account_id");
+            .Property(account => account.Id)
+            .HasColumnName("account_id");
 
         builder
             .Property(account => account.Login)

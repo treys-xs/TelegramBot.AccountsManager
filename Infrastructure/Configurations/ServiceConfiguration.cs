@@ -10,9 +10,11 @@ public class ServiceConfiguration : IEntityTypeConfiguration<Service>
     {
         builder.ToTable("services");
         
+        builder.HasKey(service => service.Id);
+        
         builder
-            .HasKey(service => service.Id)
-            .HasName("service_id");
+            .Property(service => service.Id)
+            .HasColumnName("service_id");
         
         builder
             .Property(service => service.Name)

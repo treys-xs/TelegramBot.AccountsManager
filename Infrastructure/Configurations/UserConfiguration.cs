@@ -9,10 +9,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("users");
+
+        builder.HasKey(user => user.Id);
         
         builder
-            .HasKey(user => user.Id)
-            .HasName("user_id");
+            .Property(user => user.Id)
+            .HasColumnName("user_id");
         
         builder
             .Property(user => user.TelegramId)
@@ -33,7 +35,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("is_subscription")
             .IsRequired()
             .HasDefaultValue(true);
-
+        
         builder
             .HasMany(user => user.Services)
             .WithOne(service => service.User);
