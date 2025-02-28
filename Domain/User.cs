@@ -6,6 +6,7 @@ public class User
     public long TelegramId { get; set; }
     public string Nickname { get; set; } = string.Empty;
     public string? Password { get; set; }
+    public bool IsAuthenticated { get; set; }
     public bool IsSubscription { get; set; }
     
     public UserState? State { get; set; }

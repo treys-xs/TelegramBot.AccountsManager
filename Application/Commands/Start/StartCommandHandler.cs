@@ -1,10 +1,10 @@
-﻿using Application.Enums.UserState;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MediatR;
 using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
-using Application.Interfaces;
 using Domain;
+using Application.Interfaces;
+using Application.Enums.UserState;
 
 namespace Application.Commands.Start;
 
@@ -16,21 +16,21 @@ public class StartCommandHandler(
     private readonly ITelegramBotClient _botClient = botClient;
     private readonly IApplicationDbContext _dbContext = dbContext;
     
-    public async Task Handle(StartCommand request, CancellationToken cancellationToken)
+    public async Task Handle(StartCommand context, CancellationToken cancellationToken)
     {
-        await _botClient.SendMessage(request.ChatId, $"START TEXT", cancellationToken: cancellationToken);
+        await _botClient.SendMessage(context.ChatId, $"START TEXT", cancellationToken: cancellationToken);
 
         var user = await _dbContext.Users
             .Include(user => user.State)
-            .FirstOrDefaultAsync(user => user.TelegramId == request.ChatId, cancellationToken);
+            .FirstOrDefaultAsync(user => user.TelegramId == context.ChatId, cancellationToken);
 
         if (user == null)
         {
             user = new User()
             {
                 Id = Guid.CreateVersion7(),
-                TelegramId = request.ChatId,
-                Nickname = request.Username,
+                TelegramId = context.ChatId,
+                Nickname = context.Username,
             };
 
             var userState = new UserState()
@@ -48,8 +48,8 @@ public class StartCommandHandler(
         if (user.Password == null)
         {
             await _botClient.SendMessage(
-                request.ChatId,
-                text: $"РЕКОМЕНДУЕМ СОЗДАТЬ МАСТЕР ПАРОЛЬ",
+                context.ChatId,
+                text: $"Необходимо создать мастер-пароль.",
                 replyMarkup: new InlineKeyboardMarkup()
                 {
                     InlineKeyboard = new List<IEnumerable<InlineKeyboardButton>>()
@@ -59,17 +59,9 @@ public class StartCommandHandler(
                             InlineKeyboardButton.WithCallbackData
                             (
                                 "Создать мастер-пароль",
-                                "CreateMasterPassword"
+                                "MasterPassword"
                             )
                         },
-                        new List<InlineKeyboardButton>()
-                        {
-                            InlineKeyboardButton.WithCallbackData
-                            (
-                                "Нет, спасибо.",
-                                "MainMenu"
-                            )
-                        }
                     }
                 },
                 cancellationToken: cancellationToken
@@ -79,7 +71,7 @@ public class StartCommandHandler(
         }
 
         user!.State!.Name = (int)UserStates.Authentication;
-        
+
         _dbContext.Users.Update(user);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }

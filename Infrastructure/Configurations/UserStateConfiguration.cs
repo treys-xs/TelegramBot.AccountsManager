@@ -23,6 +23,10 @@ public class UserStateConfiguration : IEntityTypeConfiguration<UserState>
         builder
             .Property(state => state.Step)
             .HasColumnName("step");
+        
+        builder
+            .Property(state => state.UserId)
+            .HasColumnName("user_id");
 
         builder
             .HasOne(state => state.User)

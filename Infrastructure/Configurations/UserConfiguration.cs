@@ -31,6 +31,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("password");
         
         builder
+            .Property(user => user.IsAuthenticated)
+            .HasColumnName("is_authenticated")
+            .IsRequired()
+            .HasDefaultValue(false);
+        
+        builder
             .Property(user => user.IsSubscription)
             .HasColumnName("is_subscription")
             .IsRequired()

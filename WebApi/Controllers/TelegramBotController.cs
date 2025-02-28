@@ -1,11 +1,11 @@
-﻿using Application.Interfaces;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using MediatR;
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using WebApi.Configurations.TelegramBot;
+using Application.Interfaces;
 using WebApi.Interfaces;
+using WebApi.Configurations.TelegramBot;
 
 namespace WebApi.Controllers;
 

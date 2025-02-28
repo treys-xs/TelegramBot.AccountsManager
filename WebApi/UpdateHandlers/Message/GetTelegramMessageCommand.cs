@@ -1,12 +1,14 @@
 ﻿using WebApi.Interfaces;
+using WebApi.UpdateHandlers.Message.Commands;
 
-namespace WebApi.UpdateHandlers.Message.Commands;
+namespace WebApi.UpdateHandlers.Message;
 
 public class GetTelegramMessageCommand
 {
     private readonly Dictionary<string, ITelegramMessageCommand> _commands = new()
     {
-        { "/start", new TelegramMessageStartCommand() }
+        { "/start", new TelegramMessageStartCommand() },
+        { "/authentication", new TelegramMessageAuthenticationCommand() }
     };
 
     public ITelegramMessageCommand Get(string commandString)
