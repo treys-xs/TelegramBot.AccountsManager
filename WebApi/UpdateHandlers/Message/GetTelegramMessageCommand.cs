@@ -8,7 +8,9 @@ public class GetTelegramMessageCommand
     private readonly Dictionary<string, ITelegramMessageCommand> _commands = new()
     {
         { "/start", new TelegramMessageStartCommand() },
-        { "/authentication", new TelegramMessageAuthenticationCommand() }
+        { "/authentication", new TelegramMessageAuthenticationCommand() },
+        { "/createMasterPassword", new TelegramMessageCreateMasterPasswordCommand() },
+        { "/getMainMenu", new TelegramMessageGetMainMenuCommand() },
     };
 
     public ITelegramMessageCommand Get(string commandString)

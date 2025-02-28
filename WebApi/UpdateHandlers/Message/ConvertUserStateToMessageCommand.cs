@@ -6,7 +6,8 @@ public class ConvertUserStateToMessageCommand
 {
     private readonly Dictionary<UserStates, string> _commands = new()
     {
-        { UserStates.Authentication, "/authentication" }
+        { UserStates.Authentication, "/authentication" },
+        { UserStates.CreateMasterPassword, "/createMasterPassword" },
     };
 
     public string Get(UserStates userState)

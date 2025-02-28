@@ -1,20 +1,20 @@
 ﻿using MediatR;
 using Telegram.Bot.Types;
+using Application.Commands.MasterPassword.CreateMasterPassword;
 using WebApi.Interfaces;
-using Application.Commands.Authentication;
 
 namespace WebApi.UpdateHandlers.Message.Commands;
 
-public class TelegramMessageAuthenticationCommand : ITelegramMessageCommand
+public class TelegramMessageCreateMasterPasswordCommand : ITelegramMessageCommand
 {
     public bool AuthenticationRequired { get; } = false;
 
     public async Task ExecuteAsync(IMediator mediator, Update update, CancellationToken cancellationToken)
     {
-        var context = new AuthenticationCommand()
+        var context = new CreateMasterPasswordCommand()
         {
             ChatId = update!.Message!.Chat.Id,
-            MasterPassword = update.Message!.Text!.Trim()
+            StepData = update.Message!.Text!.Trim()
         };
 
         await mediator.Send(context, cancellationToken);

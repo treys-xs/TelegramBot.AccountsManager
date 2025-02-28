@@ -20,7 +20,7 @@ public class AuthenticationCommandHandler(
         var user = await _dbContext.Users
             .Include(user => user.State)
             .FirstOrDefaultAsync(user => user.TelegramId == context.ChatId, cancellationToken);
-
+        
         if (user!.Password != context.MasterPassword)
         {
             await _botClient.SendMessage(user.TelegramId, "Неверный пароль, попробуйте ещё раз.", 
@@ -31,6 +31,8 @@ public class AuthenticationCommandHandler(
 
         user!.State!.Name = null;
         user!.State!.Step = null;
+        
+        user.IsAuthenticated = true;
 
         _dbContext.Users.Update(user);
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -47,7 +49,7 @@ public class AuthenticationCommandHandler(
                         InlineKeyboardButton.WithCallbackData
                         (
                             "Перейти в главное меню.",
-                            "MainMenu"
+                            "GetMainMenu"
                         )
                     },
                 }

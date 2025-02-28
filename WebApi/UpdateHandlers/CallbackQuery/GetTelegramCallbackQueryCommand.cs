@@ -7,7 +7,8 @@ public class GetTelegramCallbackQueryCommand
 {
     private readonly Dictionary<string, ITelegramCallbackQueryCommand> _commands = new()
     {
-        { "MasterPassword", new TelegramCallbackQueryMasterPasswordCommand() }
+        { "CreateMasterPassword", new TelegramCallbackQueryCreateMasterPasswordCommand() },
+        { "GetMainMenu", new TelegramCallbackQueryGetMainMenuCommand() },
     };
 
     public ITelegramCallbackQueryCommand Get(string commandString)

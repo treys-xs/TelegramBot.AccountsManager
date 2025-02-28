@@ -59,7 +59,7 @@ public class StartCommandHandler(
                             InlineKeyboardButton.WithCallbackData
                             (
                                 "Создать мастер-пароль",
-                                "MasterPassword"
+                                "CreateMasterPassword"
                             )
                         },
                     }
@@ -74,5 +74,8 @@ public class StartCommandHandler(
 
         _dbContext.Users.Update(user);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        await _botClient.SendMessage(user.TelegramId, "Пожалуйста, введите Ваш мастер-паролль", 
+            cancellationToken: cancellationToken);
     }
 }

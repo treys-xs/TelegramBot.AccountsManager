@@ -1,17 +1,17 @@
 ﻿using MediatR;
 using Telegram.Bot.Types;
-using Application.Commands.MasterPassword;
+using Application.Commands.GetMainMenu;
 using WebApi.Interfaces;
 
 namespace WebApi.UpdateHandlers.CallbackQuery.Commands;
 
-public class TelegramCallbackQueryMasterPasswordCommand : ITelegramCallbackQueryCommand
+public class TelegramCallbackQueryGetMainMenuCommand : ITelegramCallbackQueryCommand
 {
     public async Task ExecuteAsync(IMediator mediator, Update update, CancellationToken cancellationToken)
     {
-        var context = new MasterPasswordCommand()
+        var context = new GetMainMenu()
         {
-            ChatId = update.Message!.Chat.Id
+            ChatId = update!.CallbackQuery!.Message!.Chat.Id
         };
             
         await mediator.Send(context, cancellationToken);

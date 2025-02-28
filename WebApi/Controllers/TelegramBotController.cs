@@ -47,6 +47,7 @@ public class TelegramBotController(
         }
         catch (Exception ex)
         {
+            await _botClient.SendMessage(update!.Message!.Chat.Id, "Ошибка", cancellationToken: cancellationToken);
         }
 
         return Ok();
